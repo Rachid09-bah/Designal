@@ -35,7 +35,7 @@ const styles = [
 
 export function Styles() {
   return (
-    <section className="py-24 md:py-32 bg-card">
+    <section id="styles" className="py-24 md:py-32 bg-card">
       <div className="container mx-auto px-4">
         <div className="text-center space-y-8 mb-16">
           <h2 className="text-4xl md:text-6xl font-light tracking-tight text-balance">Nos styles</h2>

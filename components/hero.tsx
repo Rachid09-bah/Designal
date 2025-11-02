@@ -3,10 +3,17 @@ import { ArrowRight } from "lucide-react"
 
 export function Hero() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background">
+    <section
+      id="accueil"
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-background"
+    >
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
-        <img src="/modern-minimalist-interior-design-living-room-with.jpg" alt="Interior Design" className="w-full h-full object-cover opacity-40" />
+        <img
+          src="/modern-minimalist-interior-design-living-room-with.jpg"
+          alt="Interior Design"
+          className="w-full h-full object-cover opacity-40"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-background/80 via-background/60 to-background" />
       </div>
 
