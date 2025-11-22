@@ -71,17 +71,17 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/70 to-background" />
         </div>
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light tracking-tight">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-light tracking-tight leading-tight">
             Donnez vie à vos espaces avec DESIGNAL
           </h1>
-          <p className="mt-6 text-base md:text-lg text-muted-foreground max-w-3xl mx-auto">
+          <p className="mt-6 text-sm sm:text-base md:text-lg text-muted-foreground max-w-3xl mx-auto px-4">
             Studio créatif de design et de décoration d'intérieur. L'art de sublimer les espaces.
           </p>
-          <div className="mt-10 flex items-center justify-center gap-4">
-            <Button asChild className="bg-[#022B31] text-white hover:bg-[#0A4950] font-medium px-8 py-6 text-lg shadow-lg">
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Button asChild className="bg-[#022B31] text-white hover:bg-[#0A4950] font-medium px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg shadow-lg w-full sm:w-auto">
               <Link href="#services">Découvrir nos services</Link>
             </Button>
-            <Button variant="outline" asChild className="border-2 border-[#022B31] text-[#022B31] hover:bg-[#022B31] hover:text-white font-medium px-8 py-6 text-lg">
+            <Button variant="outline" asChild className="border-2 border-[#022B31] text-[#022B31] hover:bg-[#022B31] hover:text-white font-medium px-6 sm:px-8 py-4 sm:py-6 text-base sm:text-lg w-full sm:w-auto">
               <Link href="#contact">Demander un devis</Link>
             </Button>
           </div>
@@ -89,10 +89,10 @@ export default function Home() {
       </section>
 
       {/* À propos */}
-      <section id="a-propos" className="py-24 bg-gray-900 text-white">
-        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-          <div className="space-y-8">
-            <h2 className="text-4xl md:text-6xl font-semibold text-white">
+      <section id="a-propos" className="py-16 sm:py-24 bg-gray-900 text-white">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center">
+          <div className="space-y-6 sm:space-y-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">
               À propos
             </h2>
             <div className="w-20 h-1 bg-white"></div>
@@ -120,24 +120,24 @@ export default function Home() {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-32 bg-gray-950 text-white">
+      <section id="services" className="py-16 sm:py-24 lg:py-32 bg-gray-950 text-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20 space-y-6">
-            <h2 className="text-4xl md:text-6xl font-semibold text-white">Nos services</h2>
-            <div className="w-24 h-1 bg-white mx-auto"></div>
-            <p className="text-gray-300 text-xl max-w-3xl mx-auto">Une expertise complète pour tous vos projets d'aménagement</p>
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20 space-y-4 sm:space-y-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Nos services</h2>
+            <div className="w-16 sm:w-24 h-1 bg-white mx-auto"></div>
+            <p className="text-gray-300 text-base sm:text-lg lg:text-xl max-w-3xl mx-auto px-4">Une expertise complète pour tous vos projets d'aménagement</p>
           </div>
           <ServicesGrid />
         </div>
       </section>
 
       {/* Styles */}
-      <section id="styles" className="py-32 bg-gray-900 text-white">
+      <section id="styles" className="py-16 sm:py-24 lg:py-32 bg-gray-900 text-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20 space-y-6">
-            <h2 className="text-4xl md:text-6xl font-semibold text-white">Nos styles</h2>
-            <div className="w-24 h-1 bg-white mx-auto"></div>
-            <p className="text-gray-300 text-xl">Des univers variés pour répondre à toutes vos envies</p>
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20 space-y-4 sm:space-y-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Nos styles</h2>
+            <div className="w-16 sm:w-24 h-1 bg-white mx-auto"></div>
+            <p className="text-gray-300 text-base sm:text-lg lg:text-xl px-4">Des univers variés pour répondre à toutes vos envies</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
@@ -163,12 +163,12 @@ export default function Home() {
       </section>
 
       {/* Portfolio */}
-      <section id="portfolio" className="py-32 bg-gray-950 text-white">
+      <section id="portfolio" className="py-16 sm:py-24 lg:py-32 bg-gray-950 text-white">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-20 space-y-6">
-            <h2 className="text-4xl md:text-6xl font-semibold text-white">Portfolio</h2>
-            <div className="w-24 h-1 bg-white mx-auto"></div>
-            <p className="text-gray-300 text-xl">Découvrez nos réalisations et laissez-vous inspirer</p>
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20 space-y-4 sm:space-y-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white">Portfolio</h2>
+            <div className="w-16 sm:w-24 h-1 bg-white mx-auto"></div>
+            <p className="text-gray-300 text-base sm:text-lg lg:text-xl px-4">Découvrez nos réalisations et laissez-vous inspirer</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {loading ? (
@@ -220,7 +220,7 @@ function ServicesGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
       {servicesData.map((s, i) => {
         const isOpen = open.has(i)
         return (
@@ -232,14 +232,14 @@ function ServicesGrid() {
               role="button"
               tabIndex={0}
               onClick={() => toggle(i)}
-              className="w-full text-left p-8 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 transition-colors"
+              className="w-full text-left p-4 sm:p-6 lg:p-8 hover:bg-gray-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 transition-colors"
               aria-expanded={isOpen}
             >
               <div className="flex items-start justify-between gap-4">
-                <div>
-                  <div className="w-12 h-12 rounded-full grid place-items-center bg-white text-black mb-6 text-xl">★</div>
-                  <h3 className="text-2xl mb-3 font-semibold text-white">{s.title}</h3>
-                  <p className="text-gray-300 leading-relaxed">{s.desc}</p>
+                <div className="flex-1">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full grid place-items-center bg-white text-black mb-4 sm:mb-6 text-lg sm:text-xl">★</div>
+                  <h3 className="text-lg sm:text-xl lg:text-2xl mb-2 sm:mb-3 font-semibold text-white leading-tight">{s.title}</h3>
+                  <p className="text-gray-300 leading-relaxed text-sm sm:text-base">{s.desc}</p>
                 </div>
                 <svg className={`mt-1 size-6 text-white transition-transform ${isOpen ? 'rotate-180' : ''}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m6 9 6 6 6-6"/></svg>
               </div>

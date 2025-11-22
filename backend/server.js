@@ -26,9 +26,21 @@ app.use(helmet({
 // })
 // app.use('/api/', limiter)
 
-// CORS configuration - Plus permissif pour le développement
+// CORS configuration
+const allowedOrigins = [
+  'http://localhost:3000',
+  'https://localhost:3000',
+  process.env.FRONTEND_URL
+].filter(Boolean)
+
 app.use(cors({
-  origin: true,
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('Non autorisé par CORS'))
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
