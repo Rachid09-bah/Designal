@@ -29,13 +29,7 @@ const userSchema = new mongoose.Schema({
   },
   phone: {
     type: String,
-    trim: true,
-    validate: {
-      validator: function(v) {
-        return !v || validator.isMobilePhone(v, 'any')
-      },
-      message: 'Numéro de téléphone invalide'
-    }
+    trim: true
   },
   company: {
     type: String,

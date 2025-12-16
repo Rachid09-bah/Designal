@@ -11,13 +11,11 @@ const auth = async (req, res, next) => {
     }
 
     const token = authHeader.replace('Bearer ', '')
-    
-    if (!process.env.JWT_SECRET) {
-      console.error('JWT_SECRET non défini')
-      return res.status(500).json({ error: 'Erreur de configuration serveur' })
-    }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET)
+    // Utiliser le même fallback que le contrôleur pour éviter les incohérences
+    const secret = process.env.JWT_SECRET || 'designal-fallback-secret-2024'
+
+    const decoded = jwt.verify(token, secret)
     const user = await User.findById(decoded.userId).select('-password')
     
     if (!user || !user.isActive) {

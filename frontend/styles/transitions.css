@@ -1,0 +1,91 @@
+/* Transitions globales fluides */
+* {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition-duration: 300ms;
+}
+
+/* Transitions de page */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(20px) scale(0.98);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  transition: opacity 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-20px) scale(0.98);
+  transition: opacity 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              transform 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Animations de boutons */
+.btn-hover {
+  transition: all 300ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Animations de cartes */
+.card-hover {
+  transition: all 400ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations de succès */
+@keyframes success-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.success-animation {
+  animation: success-pulse 0.6s ease-out;
+}
+
+/* Loader élégant */
+@keyframes elegant-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.elegant-loader {
+  animation: elegant-spin 1s linear infinite;
+}
+
+/* Fade in staggered */
+.fade-in-stagger > * {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.fade-in-stagger > *:nth-child(1) { animation-delay: 0.1s; }
+.fade-in-stagger > *:nth-child(2) { animation-delay: 0.2s; }
+.fade-in-stagger > *:nth-child(3) { animation-delay: 0.3s; }
+.fade-in-stagger > *:nth-child(4) { animation-delay: 0.4s; }
+
+@keyframes fade-in-up {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

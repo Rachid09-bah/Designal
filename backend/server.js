@@ -54,6 +54,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 // Routes
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/projects', require('./routes/projects'))
+app.use('/api/categories', require('./routes/categories'))
 app.use('/api/contact', require('./routes/contact'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/upload', require('./routes/upload'))
@@ -83,10 +84,19 @@ if (process.env.MONGODB_URI) {
     maxPoolSize: 10,
     serverSelectionTimeoutMS: 5000,
     socketTimeoutMS: 45000,
+    bufferCommands: false
   })
-    .then(() => {
+    .then(async () => {
       console.log('✅ Connecté à MongoDB')
       console.log(`📊 Base de données: ${mongoose.connection.name}`)
+      
+      // Initialiser admin si nécessaire
+      try {
+        const initAdmin = require('./scripts/init-admin')
+        await initAdmin()
+      } catch (error) {
+        console.log('⚠️ Init admin:', error.message)
+      }
     })
     .catch(err => {
       console.error('❌ Erreur MongoDB:', err)
@@ -99,7 +109,10 @@ if (process.env.MONGODB_URI) {
   })
 
   mongoose.connection.on('disconnected', () => {
-    console.warn('⚠️ MongoDB déconnecté')
+    console.warn('⚠️ MongoDB déconnecté - tentative de reconnexion...')
+    setTimeout(() => {
+      mongoose.connect(process.env.MONGODB_URI)
+    }, 5000)
   })
 
   mongoose.connection.on('reconnected', () => {

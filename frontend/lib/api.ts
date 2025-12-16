@@ -31,7 +31,7 @@ export const authAPI = {
     api.post('/auth/register', userData),
   getProfile: () => api.get('/auth/me'),
   updateProfile: (userData: { name: string; phone?: string; company?: string }) =>
-    api.post('/auth/profile', userData),
+    api.put('/auth/profile', userData),
   changePassword: (passwords: { currentPassword: string; newPassword: string }) =>
     api.put('/auth/change-password', passwords),
 }
@@ -39,6 +39,7 @@ export const authAPI = {
 export const projectsAPI = {
   getAll: () => api.get('/projects'),
   getById: (id: string) => api.get(`/projects/${id}`),
+  getBySubcategory: (subcategory: string) => api.get(`/projects/subcategory/${encodeURIComponent(subcategory)}`),
   create: (projectData: any) => api.post('/projects', projectData),
   update: (id: string, projectData: any) => api.put(`/projects/${id}`, projectData),
   delete: (id: string) => api.delete(`/projects/${id}`),
@@ -67,6 +68,11 @@ export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard'),
   getUsers: (params?: any) => api.get('/admin/users', { params }),
   createAdmin: (userData: any) => api.post('/admin/create-admin', userData),
+}
+
+export const categoriesAPI = {
+  getAll: () => api.get('/categories'),
+  getSubcategories: (category: string) => api.get(`/categories/${category}/subcategories`),
 }
 
 export default api

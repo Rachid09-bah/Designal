@@ -55,7 +55,10 @@ const register = async (req, res) => {
     })
   } catch (error) {
     console.error('Erreur register:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    if (error.code === 11000) {
+      return res.status(400).json({ error: 'Email déjà utilisé' })
+    }
+    res.status(500).json({ error: 'Erreur serveur: ' + error.message })
   }
 }
 
@@ -104,7 +107,7 @@ const login = async (req, res) => {
     })
   } catch (error) {
     console.error('Erreur login:', error)
-    res.status(500).json({ error: 'Erreur serveur' })
+    res.status(500).json({ error: 'Erreur serveur: ' + error.message })
   }
 }
 

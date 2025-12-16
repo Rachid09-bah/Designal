@@ -1,15 +1,17 @@
 const express = require('express')
 const Project = require('../models/Project')
 const { auth, adminAuth } = require('../middleware/auth')
+const { validateCategorySubcategory } = require('../config/categories')
 const router = express.Router()
 
 // GET /api/projects - Récupérer tous les projets publiés
 router.get('/', async (req, res) => {
   try {
-    const { category, style, featured } = req.query
+    const { category, subcategory, style, featured } = req.query
     
     let filter = { status: 'published' }
     if (category) filter.category = category
+    if (subcategory) filter.subcategory = subcategory
     if (style) filter.style = style
     if (featured) filter.featured = featured === 'true'
     
@@ -17,6 +19,26 @@ router.get('/', async (req, res) => {
       .sort({ featured: -1, createdAt: -1 })
     
     res.json({ projects })
+  } catch (error) {
+    console.error('Erreur GET projets:', error)
+    res.status(500).json({ error: 'Erreur serveur: ' + error.message })
+  }
+})
+
+// GET /api/projects/subcategory/:subcategory - Projets par sous-catégorie
+router.get('/subcategory/:subcategory', async (req, res) => {
+  try {
+    const { subcategory } = req.params
+    
+    const projects = await Project.find({ 
+      subcategory: decodeURIComponent(subcategory),
+      status: 'published' 
+    }).sort({ featured: -1, createdAt: -1 })
+    
+    res.json({ 
+      subcategory: decodeURIComponent(subcategory),
+      projects 
+    })
   } catch (error) {
     res.status(500).json({ error: error.message })
   }
@@ -52,6 +74,14 @@ router.get('/admin/all', adminAuth, async (req, res) => {
 // POST /api/projects - Créer un projet (admin)
 router.post('/', adminAuth, async (req, res) => {
   try {
+    const { category, subcategory } = req.body
+    
+    // Validation des relations catégorie/sous-catégorie
+    const validation = validateCategorySubcategory(category, subcategory)
+    if (!validation.valid) {
+      return res.status(400).json({ error: validation.error })
+    }
+    
     const project = new Project(req.body)
     await project.save()
     
@@ -60,7 +90,12 @@ router.post('/', adminAuth, async (req, res) => {
       project 
     })
   } catch (error) {
-    res.status(400).json({ error: error.message })
+    console.error('Erreur création projet:', error)
+    if (error.name === 'ValidationError') {
+      const messages = Object.values(error.errors).map(e => e.message)
+      return res.status(400).json({ error: messages.join(', ') })
+    }
+    res.status(400).json({ error: 'Erreur création: ' + error.message })
   }
 })
 

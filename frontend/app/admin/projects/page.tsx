@@ -6,20 +6,24 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
+import api, { projectsAPI, uploadAPI } from "@/lib/api"
 
-const categories = [
-  { value: 'Résidentiel', subcategories: ['Chambre parentale', 'Salon contemporain', 'Cuisine moderne', 'Salle de bain', 'Dressing sur mesure'] },
-  { value: 'Studio', subcategories: ['Studio photo', 'Espace mannequinat', 'Plateau influenceur', 'Setup podcast', 'Setup gaming'] },
-  { value: 'Boutique', subcategories: ['Prêt-à-porter', 'Accessoires & maroquinerie', 'Parfumerie', 'Merchandising visuel'] },
-  { value: 'Commercial', subcategories: ['Parcours d\'exposition', 'Éclairage muséal', 'Scénographie', 'Signalétique'] },
-  { value: 'Bureau', subcategories: ['Open space', 'Salle de réunion', 'Phone booth', 'Espace détente'] },
-  { value: 'Restaurant', subcategories: ['Fast-food', 'Café', 'Lounge', 'Comptoir & flux'] },
-  { value: 'Autre', subcategories: ['Comptoir & parcours client', 'Rayonnage & vitrines', 'Espace d\'attente', 'Back-office'] }
-]
+// Helper pour base URL (fallback si NEXT_PUBLIC_API_URL manquant)
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api'
+// Construit une URL absolue d'image à partir d'un chemin renvoyé par le backend
+const buildImageUrl = (url: string) => {
+  if (!url) return ''
+  if (url.startsWith('http')) return url
+  const root = API_BASE.replace(/\/?api\/?$/, '/')
+  return root.replace(/\/$/, '') + url
+}
+
+import { useCategories } from '@/hooks/useCategories'
 
 const styles = ['Moderne', 'Casual', 'Tradi-moderne', 'Artistique', 'Gaming & Tech', 'Hypebeast & Streetwear', 'Autre']
 
 function AdminProjectsContent() {
+  const { categories, getSubcategories, validateCategorySubcategory } = useCategories()
   const [projects, setProjects] = useState([])
   const [isLoading, setIsLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
@@ -36,6 +40,8 @@ function AdminProjectsContent() {
   })
   const [isUploading, setIsUploading] = useState(false)
   const [editingProject, setEditingProject] = useState<any>(null)
+  const [errorMsg, setErrorMsg] = useState<string>("")
+  const [successMsg, setSuccessMsg] = useState<string>("")
   const router = useRouter()
 
   useEffect(() => {
@@ -43,16 +49,14 @@ function AdminProjectsContent() {
   }, [])
 
   const fetchProjects = async () => {
+    setErrorMsg("")
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/admin/all`, {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-      })
-      if (response.ok) {
-        const data = await response.json()
-        setProjects(data.projects || [])
-      }
+      const { data } = await api.get('/projects/admin/all')
+      setProjects(data.projects || [])
     } catch (error: any) {
-      console.error("Erreur lors du chargement des projets")
+      console.error("Erreur lors du chargement des projets", error)
+      const msg = error?.response?.data?.error || 'Erreur lors du chargement des projets'
+      setErrorMsg(msg)
     } finally {
       setIsLoading(false)
     }
@@ -60,37 +64,45 @@ function AdminProjectsContent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMsg("")
+    setSuccessMsg("")
     try {
       const projectData = {
         ...formData,
         images: formData.images.filter(img => img.url)
       }
 
-      const url = editingProject 
-        ? `${process.env.NEXT_PUBLIC_API_URL}/projects/${editingProject._id}`
-        : `${process.env.NEXT_PUBLIC_API_URL}/projects`
-      
-      const response = await fetch(url, {
-        method: editingProject ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(projectData)
-      })
-
-      if (response.ok) {
-        setShowForm(false)
-        setEditingProject(null)
-        setFormData({
-          title: '', description: '', category: '', subcategory: '', style: '',
-          status: 'draft', featured: false, client: '',
-          images: [{ url: '', alt: '', isPrimary: true }]
-        })
-        fetchProjects()
+      if (!projectData.title || !projectData.description || !projectData.category) {
+        setErrorMsg('Veuillez renseigner Titre, Description et Catégorie')
+        return
       }
-    } catch (error) {
-      console.error('Erreur lors de la création')
+
+      // Validation des relations catégorie/sous-catégorie
+      if (!validateCategorySubcategory(projectData.category, projectData.subcategory)) {
+        setErrorMsg('Sous-catégorie invalide pour cette catégorie')
+        return
+      }
+
+      if (editingProject) {
+        await projectsAPI.update(editingProject._id, projectData)
+        setSuccessMsg('Projet modifié avec succès')
+      } else {
+        await projectsAPI.create(projectData)
+        setSuccessMsg('Projet créé avec succès')
+      }
+
+      setShowForm(false)
+      setEditingProject(null)
+      setFormData({
+        title: '', description: '', category: '', subcategory: '', style: '',
+        status: 'draft', featured: false, client: '',
+        images: [{ url: '', alt: '', isPrimary: true }]
+      })
+      fetchProjects()
+    } catch (error: any) {
+      console.error('Erreur lors de la création/mise à jour', error)
+      const msg = error?.response?.data?.error || 'Erreur lors de la création/mise à jour du projet'
+      setErrorMsg(msg)
     }
   }
 
@@ -112,68 +124,45 @@ function AdminProjectsContent() {
 
   const deleteProject = async (id: string) => {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce projet ?')) return
-    
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      })
-      if (response.ok) fetchProjects()
-    } catch (error) {
-      console.error('Erreur:', error)
+      await projectsAPI.delete(id)
+      fetchProjects()
+    } catch (error: any) {
+      console.error('Erreur suppression:', error)
+      const msg = error?.response?.data?.error || 'Erreur lors de la suppression'
+      setErrorMsg(msg)
     }
   }
 
   const toggleStatus = async (id: string, currentStatus: string) => {
     const newStatus = currentStatus === 'published' ? 'draft' : 'published'
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects/${id}/status`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify({ status: newStatus })
-      })
-      if (response.ok) fetchProjects()
-    } catch (error) {
-      console.error('Erreur:', error)
+      await projectsAPI.updateStatus(id, newStatus)
+      fetchProjects()
+    } catch (error: any) {
+      console.error('Erreur changement statut:', error)
+      const msg = error?.response?.data?.error || 'Erreur lors du changement de statut'
+      setErrorMsg(msg)
     }
   }
 
-  const selectedCategory = categories.find(cat => cat.value === formData.category)
+  const selectedSubcategories = getSubcategories(formData.category)
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
 
     setIsUploading(true)
-    const formDataUpload = new FormData()
-    formDataUpload.append('image', file)
-
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/upload`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: formDataUpload
+      const { data } = await uploadAPI.single(file)
+      setFormData({
+        ...formData,
+        images: [{ url: data.imageUrl, alt: file.name, isPrimary: true }]
       })
-
-      if (response.ok) {
-        const data = await response.json()
-        console.log('Upload response:', data)
-        setFormData({
-          ...formData,
-          images: [{ url: data.imageUrl, alt: file.name, isPrimary: true }]
-        })
-      } else {
-        console.error('Erreur upload')
-      }
-    } catch (error) {
-      console.error('Erreur:', error)
+    } catch (error: any) {
+      console.error('Erreur upload:', error)
+      const msg = error?.response?.data?.error || 'Erreur lors de l\'upload'
+      setErrorMsg(msg)
     } finally {
       setIsUploading(false)
     }
@@ -262,10 +251,10 @@ function AdminProjectsContent() {
                     value={formData.subcategory}
                     onChange={(e) => setFormData({ ...formData, subcategory: e.target.value })}
                     className="p-4 border border-gray-700 rounded-xl bg-gray-800 text-white focus:border-white focus:outline-none transition-colors font-medium"
-                    disabled={!selectedCategory}
+                    disabled={!formData.category}
                   >
                     <option value="">Sous-catégorie</option>
-                    {selectedCategory?.subcategories.map(sub => (
+                    {selectedSubcategories.map(sub => (
                       <option key={sub} value={sub}>{sub}</option>
                     ))}
                   </select>
@@ -294,7 +283,7 @@ function AdminProjectsContent() {
                   {formData.images[0].url && (
                     <div className="mt-2">
                       <img 
-                        src={formData.images[0].url.startsWith('/') ? `http://localhost:5001${formData.images[0].url}` : formData.images[0].url}
+                        src={buildImageUrl(formData.images[0].url)}
                         alt="Aperçu" 
                         className="w-32 h-32 object-cover rounded-lg border border-gray-600" 
                         onLoad={() => console.log('Image chargée avec succès')}
@@ -335,6 +324,17 @@ function AdminProjectsContent() {
               </form>
             </CardContent>
           </Card>
+        )}
+
+        {errorMsg && (
+          <div className="mb-6 p-3 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm">
+            {errorMsg}
+          </div>
+        )}
+        {successMsg && (
+          <div className="mb-6 p-3 bg-green-500/20 border border-green-500/30 rounded-xl text-green-200 text-sm">
+            {successMsg}
+          </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

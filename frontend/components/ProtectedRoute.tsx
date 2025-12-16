@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { authAPI } from '@/lib/api'
 
 interface ProtectedRouteProps {
   children: React.ReactNode
@@ -23,31 +24,17 @@ export function ProtectedRoute({ children, requireAdmin = false }: ProtectedRout
       }
 
       try {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-          headers: { 'Authorization': `Bearer ${token}` }
-        })
-
-        if (!response.ok) {
+        const { data } = await authAPI.getProfile()
+        if (!data?.success) {
           localStorage.removeItem('token')
           localStorage.removeItem('user')
           router.push('/auth/login')
           return
         }
-
-        const data = await response.json()
-        
-        if (!data.success) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('user')
-          router.push('/auth/login')
-          return
-        }
-
         if (requireAdmin && data.user.role !== 'admin') {
           router.push('/auth/login')
           return
         }
-
         setIsAuthorized(true)
       } catch (error) {
         localStorage.removeItem('token')

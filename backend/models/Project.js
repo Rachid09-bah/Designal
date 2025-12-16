@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { validateCategorySubcategory, getAllCategories } = require('../config/categories')
 
 const projectSchema = new mongoose.Schema({
   title: {
@@ -13,11 +14,19 @@ const projectSchema = new mongoose.Schema({
   category: {
     type: String,
     required: true,
-    enum: ['Résidentiel', 'Commercial', 'Studio', 'Boutique', 'Restaurant', 'Bureau', 'Autre']
+    enum: getAllCategories()
   },
   subcategory: {
     type: String,
-    required: false
+    required: false,
+    validate: {
+      validator: function(subcategory) {
+        if (!subcategory) return true
+        const validation = validateCategorySubcategory(this.category, subcategory)
+        return validation.valid
+      },
+      message: 'Sous-catégorie invalide pour cette catégorie'
+    }
   },
   style: {
     type: String,
