@@ -19,14 +19,18 @@ export function useAuth() {
 
   const checkAuth = async () => {
     try {
-      const token = localStorage.getItem('token')
+      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null
       if (!token) {
         setIsLoading(false)
         return
       }
 
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        credentials: 'include'
       })
 
       if (response.ok) {
@@ -34,30 +38,40 @@ export function useAuth() {
         if (data.success) {
           setUser(data.user)
         } else {
+          if (typeof window !== 'undefined') {
+            localStorage.removeItem('token')
+            localStorage.removeItem('user')
+          }
+        }
+      } else {
+        if (typeof window !== 'undefined') {
           localStorage.removeItem('token')
           localStorage.removeItem('user')
         }
-      } else {
+      }
+    } catch (error) {
+      if (typeof window !== 'undefined') {
         localStorage.removeItem('token')
         localStorage.removeItem('user')
       }
-    } catch (error) {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
     } finally {
       setIsLoading(false)
     }
   }
 
   const login = (token: string, userData: User) => {
-    localStorage.setItem('token', token)
-    localStorage.setItem('user', JSON.stringify(userData))
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('token', token)
+      localStorage.setItem('user', JSON.stringify(userData))
+    }
     setUser(userData)
   }
 
   const logout = () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token')
+      localStorage.removeItem('user')
+    }
     setUser(null)
     router.push('/')
   }
