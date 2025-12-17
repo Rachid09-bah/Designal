@@ -8,14 +8,10 @@ import { Badge } from "@/components/ui/badge"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import api, { projectsAPI, uploadAPI } from "@/lib/api"
 
+import { config } from '@/lib/config'
+
 // Helper pour base URL
-const buildImageUrl = (url: string) => {
-  if (!url) return ''
-  if (url.startsWith('http')) return url
-  
-  // Toujours utiliser Render en production
-  return 'https://designal-bah.onrender.com' + url
-}
+const buildImageUrl = (url: string) => config.getImageUrl(url)
 
 import { useCategories } from '@/hooks/useCategories'
 

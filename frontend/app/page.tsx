@@ -9,6 +9,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Contact } from "@/components/contact"
 import { PageTransition } from "@/components/PageTransition"
+import { config } from "@/lib/config"
 
 const servicesData = [
   { title: "Appartement / Maison", desc: "Chambre, salon, cuisine", subs: [
@@ -422,7 +423,7 @@ export default function Home() {
               projects.map((project, index) => (
                 <div key={project._id} className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
                   <Image 
-                    src={project.images?.[0]?.url ? `https://designal-bah.onrender.com${project.images[0].url}` : '/placeholder.jpg'} 
+                    src={config.getImageUrl(project.images?.[0]?.url || '')} 
                     alt={project.images?.[0]?.alt || project.title} 
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700" 
