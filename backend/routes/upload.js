@@ -42,7 +42,7 @@ const upload = multer({
 })
 
 // POST /api/upload - Upload d'une image
-router.post('/', auth, upload.single('image'), (req, res) => {
+router.post('/', upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Aucun fichier fourni' })
@@ -61,7 +61,7 @@ router.post('/', auth, upload.single('image'), (req, res) => {
 })
 
 // POST /api/upload/single - Upload d'une image (alias)
-router.post('/single', auth, upload.single('image'), (req, res) => {
+router.post('/single', upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'Aucun fichier fourni' })
@@ -80,7 +80,7 @@ router.post('/single', auth, upload.single('image'), (req, res) => {
 })
 
 // POST /api/upload/multiple - Upload multiple images
-router.post('/multiple', auth, upload.array('images', 10), (req, res) => {
+router.post('/multiple', upload.array('images', 10), (req, res) => {
   try {
     if (!req.files || req.files.length === 0) {
       return res.status(400).json({ error: 'Aucun fichier fourni' })
