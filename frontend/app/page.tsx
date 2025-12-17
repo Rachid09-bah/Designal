@@ -2,6 +2,7 @@
 
 import React from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { motion } from "framer-motion"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
@@ -66,11 +67,14 @@ export default function Home() {
       {/* Hero */}
       <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-32">
         <div className="absolute inset-0 -z-10">
-          <img
+          <Image
             src="/modern-minimalist-interior-design-living-room-with.jpg"
             alt="Design intérieur haut de gamme"
-            className="w-full h-full object-cover object-center"
+            fill
+            className="object-cover object-center"
             style={{ filter: 'brightness(0.3) contrast(1.2)' }}
+            priority
+            quality={85}
           />
           <div className="absolute inset-0 bg-gradient-to-br from-black/70 via-black/50 to-black/80" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#022B31]/30 to-transparent" />
@@ -232,10 +236,13 @@ export default function Home() {
             
             <div className="relative">
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl border border-gray-700/50">
-                <img 
+                <Image 
                   src="/luxury-modern-living-room.png" 
-                  className="w-full h-full object-cover hover:scale-105 transition-transform duration-700" 
-                  alt="Intérieur premium DESIGNAL" 
+                  alt="Intérieur premium DESIGNAL"
+                  fill
+                  className="object-cover hover:scale-105 transition-transform duration-700" 
+                  quality={80}
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                 
@@ -333,10 +340,13 @@ export default function Home() {
             ].map((st,i)=> (
               <div key={st.name} className="group relative overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
                 <div className="relative h-80 overflow-hidden">
-                  <img 
+                  <Image 
                     src={st.img} 
                     alt={st.name} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                    quality={75}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                   
@@ -411,11 +421,13 @@ export default function Home() {
             ) : projects.length > 0 ? (
               projects.map((project, index) => (
                 <div key={project._id} className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
-                  <img 
+                  <Image 
                     src={project.images?.[0]?.url?.startsWith('/uploads') ? `http://localhost:5001${project.images[0].url}` : project.images?.[0]?.url || '/placeholder.jpg'} 
                     alt={project.images?.[0]?.alt || project.title} 
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
-                    onError={(e) => { e.currentTarget.src = '/placeholder.jpg' }}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-700" 
+                    quality={75}
+                    loading="lazy"
                   />
                   
                   {/* Gradient overlays */}
