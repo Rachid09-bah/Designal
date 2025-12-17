@@ -1,2 +1,3 @@
-Deploy trigger: 2024-12-19 11:05
+Deploy trigger: 2024-12-19 11:15
 Force auto-deploy on every push
+Update: Login protection added
