@@ -62,9 +62,10 @@ app.use('/api/upload', require('./routes/upload'))
 // Route de test
 app.get('/api/health', (req, res) => {
   res.json({ 
-    message: 'Backend DESIGNAL fonctionne!',
+    message: 'Backend DESIGNAL fonctionne! v2',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
+    version: '1.0.1'
   })
 })
 
