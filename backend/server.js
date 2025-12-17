@@ -26,9 +26,9 @@ app.use(helmet({
 // })
 // app.use('/api/', limiter)
 
-// CORS configuration - Permissif pour production
+// CORS - Autoriser toutes les origines pour production
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, 'http://localhost:3000', 'https://localhost:3000'],
+  origin: true,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
@@ -55,7 +55,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')))
 // Routes
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/projects', require('./routes/projects'))
-app.use('/api/categories', require('./routes/categories'))
 app.use('/api/contact', require('./routes/contact'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/upload', require('./routes/upload'))
@@ -91,13 +90,7 @@ if (process.env.MONGODB_URI) {
       console.log('✅ Connecté à MongoDB')
       console.log(`📊 Base de données: ${mongoose.connection.name}`)
       
-      // Initialiser admin si nécessaire
-      try {
-        const initAdmin = require('./scripts/init-admin')
-        await initAdmin()
-      } catch (error) {
-        console.log('⚠️ Init admin:', error.message)
-      }
+      // Admin initialisé manuellement
     })
     .catch(err => {
       console.error('❌ Erreur MongoDB:', err)
