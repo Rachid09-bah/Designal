@@ -38,4 +38,48 @@ router.get('/dashboard', auth, adminAuth, async (req, res) => {
   }
 })
 
+// GET /api/admin/users - Liste des utilisateurs
+router.get('/users', auth, adminAuth, async (req, res) => {
+  try {
+    const users = await User.find()
+      .sort({ createdAt: -1 })
+      .select('name email role createdAt')
+    
+    res.json({
+      success: true,
+      users
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// POST /api/admin/create-admin - Créer un admin
+router.post('/create-admin', auth, adminAuth, async (req, res) => {
+  try {
+    const { name, email, password } = req.body
+    
+    const existingUser = await User.findOne({ email })
+    if (existingUser) {
+      return res.status(400).json({ error: 'Utilisateur déjà existant' })
+    }
+    
+    const user = new User({
+      name,
+      email,
+      password,
+      role: 'admin'
+    })
+    
+    await user.save()
+    
+    res.status(201).json({
+      success: true,
+      message: 'Admin créé avec succès'
+    })
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
 module.exports = router

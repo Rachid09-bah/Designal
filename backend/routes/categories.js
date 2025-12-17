@@ -40,4 +40,19 @@ router.get('/', (req, res) => {
   })
 })
 
+// GET /api/categories/:category/subcategories
+router.get('/:category/subcategories', (req, res) => {
+  const category = decodeURIComponent(req.params.category)
+  const found = categoriesData.find(cat => cat.value === category)
+  
+  if (!found) {
+    return res.status(404).json({ error: 'Catégorie non trouvée' })
+  }
+  
+  res.json({
+    success: true,
+    subcategories: found.subcategories
+  })
+})
+
 module.exports = router

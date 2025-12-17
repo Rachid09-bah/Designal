@@ -41,7 +41,26 @@ const upload = multer({
   }
 })
 
-// POST /api/upload/single - Upload d'une image
+// POST /api/upload - Upload d'une image
+router.post('/', auth, upload.single('image'), (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' })
+    }
+    
+    const imageUrl = `/uploads/${req.file.filename}`
+    
+    res.json({
+      success: true,
+      imageUrl,
+      filename: req.file.filename
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// POST /api/upload/single - Upload d'une image (alias)
 router.post('/single', auth, upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
@@ -54,6 +73,27 @@ router.post('/single', auth, upload.single('image'), (req, res) => {
       success: true,
       imageUrl,
       filename: req.file.filename
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
+})
+
+// POST /api/upload/multiple - Upload multiple images
+router.post('/multiple', auth, upload.array('images', 10), (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' })
+    }
+    
+    const images = req.files.map(file => ({
+      url: `/uploads/${file.filename}`,
+      filename: file.filename
+    }))
+    
+    res.json({
+      success: true,
+      images
     })
   } catch (error) {
     res.status(500).json({ error: error.message })
