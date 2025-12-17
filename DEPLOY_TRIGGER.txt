@@ -1,0 +1,5 @@
+Performance optimizations deployed - v1.0.4
+- Next.js Image optimization enabled
+- Lazy loading implemented
+- WebP/AVIF formats
+- Reduced image quality for faster loading
