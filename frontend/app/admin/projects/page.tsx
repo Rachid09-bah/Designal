@@ -13,12 +13,8 @@ const buildImageUrl = (url: string) => {
   if (!url) return ''
   if (url.startsWith('http')) return url
   
-  // Utiliser l'URL du backend Render en production
-  const baseUrl = process.env.NODE_ENV === 'production' 
-    ? 'https://designal-bah.onrender.com'
-    : 'http://localhost:5001'
-  
-  return baseUrl + url
+  // Toujours utiliser Render en production
+  return 'https://designal-bah.onrender.com' + url
 }
 
 import { useCategories } from '@/hooks/useCategories'
