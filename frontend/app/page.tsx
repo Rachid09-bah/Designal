@@ -64,7 +64,7 @@ export default function Home() {
       <Header />
 
       {/* Hero */}
-      <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32">
+      <section id="accueil" className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20 sm:pt-32">
         <div className="absolute inset-0 -z-10">
           <img
             src="/modern-minimalist-interior-design-living-room-with.jpg"
@@ -80,7 +80,7 @@ export default function Home() {
         <div className="absolute top-20 left-10 w-32 h-32 bg-white/5 rounded-full blur-xl animate-pulse" />
         <div className="absolute bottom-32 right-16 w-24 h-24 bg-[#022B31]/20 rounded-full blur-lg animate-pulse delay-1000" />
         
-        <div className="container mx-auto px-4 text-center relative z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
           <div className="max-w-5xl mx-auto">
 
             
@@ -88,7 +88,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: "easeOut" }}
-              className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-6 text-center"
+              className="text-3xl xs:text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-tight mb-4 sm:mb-6 text-center"
             >
               <motion.span 
                 initial={{ opacity: 0, y: 20 }}
@@ -112,7 +112,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="text-lg sm:text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed mb-8 font-light"
+              className="text-base sm:text-lg lg:text-xl text-gray-200 max-w-3xl mx-auto leading-relaxed mb-6 sm:mb-8 font-light px-4 sm:px-0"
             >
               Studio de design d'intérieur premium spécialisé dans l'aménagement d'espaces d'exception.
               <br className="hidden sm:block" />
@@ -123,7 +123,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4"
+              className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 px-4 sm:px-0"
             >
               <Button asChild className="bg-[#022B31] text-white hover:bg-[#0A4950] font-medium px-8 py-3 text-base shadow-lg hover:shadow-xl transition-all duration-200 w-full sm:w-auto">
                 <Link href="#services">
@@ -506,7 +506,7 @@ function ServicesGrid() {
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {servicesData.map((s, i) => {
         const isOpen = open.has(i)
         return (
