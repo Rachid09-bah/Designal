@@ -9,7 +9,7 @@ import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Contact } from "@/components/contact"
 import { PageTransition } from "@/components/PageTransition"
-import { config } from "@/lib/config"
+import { ImageLoader } from "@/components/ImageLoader"
 
 const servicesData = [
   { title: "Appartement / Maison", desc: "Chambre, salon, cuisine", subs: [
@@ -237,7 +237,7 @@ export default function Home() {
             
             <div className="relative">
               <div className="relative aspect-[4/3] overflow-hidden rounded-3xl shadow-2xl border border-gray-700/50">
-                <Image 
+                <ImageLoader 
                   src="/luxury-modern-living-room.png" 
                   alt="Intérieur premium DESIGNAL"
                   fill
@@ -341,7 +341,7 @@ export default function Home() {
             ].map((st,i)=> (
               <div key={st.name} className="group relative overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
                 <div className="relative h-80 overflow-hidden">
-                  <Image 
+                  <ImageLoader 
                     src={st.img} 
                     alt={st.name} 
                     fill
@@ -422,8 +422,8 @@ export default function Home() {
             ) : projects.length > 0 ? (
               projects.map((project, index) => (
                 <div key={project._id} className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
-                  <Image 
-                    src={config.getImageUrl(project.images?.[0]?.url || '')} 
+                  <ImageLoader 
+                    src={project.images?.[0]?.url || ''} 
                     alt={project.images?.[0]?.alt || project.title} 
                     fill
                     className="object-cover group-hover:scale-110 transition-transform duration-700" 

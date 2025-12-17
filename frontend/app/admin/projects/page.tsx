@@ -8,10 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import api, { projectsAPI, uploadAPI } from "@/lib/api"
 
-import { config } from '@/lib/config'
-
-// Helper pour base URL
-const buildImageUrl = (url: string) => config.getImageUrl(url)
+import { ImageLoader } from '@/components/ImageLoader'
 
 import { useCategories } from '@/hooks/useCategories'
 
@@ -277,15 +274,12 @@ function AdminProjectsContent() {
                   />
                   {formData.images[0].url && (
                     <div className="mt-2">
-                      <img 
-                        src={buildImageUrl(formData.images[0].url)}
+                      <ImageLoader 
+                        src={formData.images[0].url}
                         alt="Aperçu" 
-                        className="w-32 h-32 object-cover rounded-lg border border-gray-600" 
-                        onLoad={() => console.log('Image chargée avec succès')}
-                        onError={(e) => {
-                          console.log('Erreur image URL:', formData.images[0].url)
-                          console.log('Erreur complète:', e)
-                        }}
+                        width={128}
+                        height={128}
+                        className="object-cover rounded-lg border border-gray-600" 
                       />
                       <p className="text-xs text-gray-400 mt-1">URL: {formData.images[0].url}</p>
                     </div>
