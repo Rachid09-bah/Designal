@@ -8,14 +8,17 @@ import { Badge } from "@/components/ui/badge"
 import { ProtectedRoute } from "@/components/ProtectedRoute"
 import api, { projectsAPI, uploadAPI } from "@/lib/api"
 
-// Helper pour base URL (fallback si NEXT_PUBLIC_API_URL manquant)
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api'
-// Construit une URL absolue d'image à partir d'un chemin renvoyé par le backend
+// Helper pour base URL
 const buildImageUrl = (url: string) => {
   if (!url) return ''
   if (url.startsWith('http')) return url
-  const root = API_BASE.replace(/\/?api\/?$/, '/')
-  return root.replace(/\/$/, '') + url
+  
+  // Utiliser l'URL du backend Render en production
+  const baseUrl = process.env.NODE_ENV === 'production' 
+    ? 'https://designal-bah.onrender.com'
+    : 'http://localhost:5001'
+  
+  return baseUrl + url
 }
 
 import { useCategories } from '@/hooks/useCategories'
