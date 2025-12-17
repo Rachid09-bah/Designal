@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import Link from "next/link"
@@ -13,6 +13,26 @@ export default function LoginPage() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
+  const [isChecking, setIsChecking] = useState(true)
+
+  // Vérifier si déjà connecté
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    const userData = localStorage.getItem('user')
+    
+    if (token && userData) {
+      const user = JSON.parse(userData)
+      // Rediriger selon le rôle
+      if (user.role === 'admin') {
+        window.location.href = '/admin/projects'
+      } else {
+        window.location.href = '/'
+      }
+      return
+    }
+    
+    setIsChecking(false)
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,6 +69,18 @@ export default function LoginPage() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  // Afficher un loader pendant la vérification
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p>Vérification...</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -126,6 +158,7 @@ export default function LoginPage() {
               <div className="text-center">
                 <p className="text-xs text-gray-500 mb-2">Compte de démonstration :</p>
                 <p className="text-xs text-gray-400">admin@designal.com / admin123</p>
+                <p className="text-xs text-gray-500 mt-2">Déjà connecté ? Vous serez redirigé automatiquement.</p>
               </div>
             </div>
           </form>
