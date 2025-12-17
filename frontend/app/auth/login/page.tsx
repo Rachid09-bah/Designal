@@ -1,40 +1,41 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import Link from "next/link"
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: "",
-    password: "",
-    rememberMe: false
+    password: ""
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const [isChecking, setIsChecking] = useState(true)
 
   // Vérifier si déjà connecté
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    const userData = localStorage.getItem('user')
-    
-    if (token && userData) {
-      const user = JSON.parse(userData)
-      // Rediriger selon le rôle
-      if (user.role === 'admin') {
-        window.location.href = '/admin/projects'
-      } else {
-        window.location.href = '/'
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('token')
+        const userData = localStorage.getItem('user')
+        
+        if (token && userData) {
+          const user = JSON.parse(userData)
+          setTimeout(() => {
+            if (user.role === 'admin') {
+              window.location.replace('/admin/projects')
+            } else {
+              window.location.replace('/')
+            }
+          }, 100)
+        }
+      } catch (e) {
+        // Ignorer les erreurs
       }
-      return
     }
     
-    setIsChecking(false)
+    checkAuth()
   }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
@@ -55,115 +56,175 @@ export default function LoginPage() {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
         
-        // Redirection mobile forcée
-        if (data.user.role === 'admin') {
-          window.location.href = '/admin/projects'
-        } else {
-          window.location.href = '/'
-        }
+        // Redirection forcée
+        setTimeout(() => {
+          if (data.user.role === 'admin') {
+            window.location.replace('/admin/projects')
+          } else {
+            window.location.replace('/')
+          }
+        }, 200)
       } else {
         setError(data.error || "Identifiants incorrects")
       }
     } catch (error) {
-      setError("Erreur de connexion au serveur")
+      setError("Erreur de connexion")
     } finally {
       setIsLoading(false)
     }
   }
 
-  // Afficher un loader pendant la vérification
-  if (isChecking) {
-    return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p>Vérification...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
-      <Card className="w-full max-w-md bg-gray-900 border-gray-700">
-        <CardHeader className="text-center pb-8">
-          <div className="mb-4">
-            <Link href="/" className="text-3xl font-bold text-white">DESIGNAL</Link>
+    <div style={{
+      minHeight: '100vh',
+      backgroundColor: '#000',
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '16px'
+    }}>
+      <div style={{
+        width: '100%',
+        maxWidth: '400px',
+        backgroundColor: '#1a1a1a',
+        padding: '32px',
+        borderRadius: '12px',
+        border: '1px solid #333'
+      }}>
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <a href="/" style={{ 
+            fontSize: '28px', 
+            fontWeight: 'bold', 
+            color: '#fff', 
+            textDecoration: 'none' 
+          }}>
+            DESIGNAL
+          </a>
+          <h1 style={{ 
+            fontSize: '24px', 
+            margin: '16px 0 8px 0',
+            fontWeight: '600'
+          }}>
+            Connexion
+          </h1>
+          <p style={{ color: '#999', margin: 0 }}>
+            Accédez à votre espace
+          </p>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}>
+              Email
+            </label>
+            <input
+              type="email"
+              required
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                backgroundColor: '#2a2a2a',
+                border: '1px solid #444',
+                color: '#fff',
+                fontSize: '16px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              placeholder="votre@email.com"
+            />
           </div>
-          <CardTitle className="text-2xl font-semibold text-white">Connexion</CardTitle>
-          <p className="text-gray-400 mt-2">Accédez à votre espace personnel</p>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Email</label>
-              <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-white focus:outline-none transition-colors"
-                placeholder="votre.email@entreprise.com"
-              />
+
+          <div style={{ marginBottom: '20px' }}>
+            <label style={{ 
+              display: 'block', 
+              marginBottom: '8px',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}>
+              Mot de passe
+            </label>
+            <input
+              type="password"
+              required
+              value={formData.password}
+              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+              style={{
+                width: '100%',
+                padding: '12px',
+                borderRadius: '8px',
+                backgroundColor: '#2a2a2a',
+                border: '1px solid #444',
+                color: '#fff',
+                fontSize: '16px',
+                outline: 'none',
+                boxSizing: 'border-box'
+              }}
+              placeholder="Votre mot de passe"
+            />
+          </div>
+
+          {error && (
+            <div style={{
+              padding: '12px',
+              backgroundColor: '#dc2626',
+              border: '1px solid #b91c1c',
+              borderRadius: '8px',
+              color: '#fff',
+              fontSize: '14px',
+              marginBottom: '20px'
+            }}>
+              {error}
             </div>
+          )}
 
-            <div>
-              <label className="block text-sm font-medium text-white mb-2">Mot de passe</label>
-              <input
-                type="password"
-                required
-                value={formData.password}
-                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="w-full p-3 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-white focus:outline-none transition-colors"
-                placeholder="Votre mot de passe"
-              />
-            </div>
+          <button 
+            type="submit" 
+            disabled={isLoading}
+            style={{
+              width: '100%',
+              padding: '16px',
+              backgroundColor: '#fff',
+              color: '#000',
+              border: 'none',
+              borderRadius: '8px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: isLoading ? 'not-allowed' : 'pointer',
+              opacity: isLoading ? 0.7 : 1
+            }}
+          >
+            {isLoading ? "Connexion..." : "Se connecter"}
+          </button>
 
-            <div className="flex items-center justify-between">
-              <label className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={formData.rememberMe}
-                  onChange={(e) => setFormData({ ...formData, rememberMe: e.target.checked })}
-                  className="accent-white"
-                />
-                <span className="text-sm text-gray-300">Se souvenir de moi</span>
-              </label>
-              <Link href="/auth/forgot-password" className="text-sm text-white underline">
-                Mot de passe oublié ?
-              </Link>
-            </div>
-
-            {error && (
-              <div className="p-4 bg-red-900/50 border border-red-700 rounded-lg text-red-300 text-sm">
-                {error}
-              </div>
-            )}
-
-            <Button 
-              type="submit" 
-              disabled={isLoading}
-              className="w-full bg-white text-black hover:bg-gray-200 font-medium py-4 text-lg rounded-lg"
-            >
-              {isLoading ? "Connexion..." : "Se connecter"}
-            </Button>
-
-            <div className="text-center pt-4">
-              <p className="text-gray-400">
-                Pas encore de compte ? <Link href="/auth/register" className="text-white underline font-medium">S'inscrire</Link>
+          <div style={{ textAlign: 'center', marginTop: '24px' }}>
+            <p style={{ color: '#999', margin: '0 0 16px 0' }}>
+              Pas de compte ? <a href="/auth/register" style={{ color: '#fff', textDecoration: 'underline' }}>S'inscrire</a>
+            </p>
+            <div style={{ 
+              padding: '16px', 
+              backgroundColor: '#1a1a1a', 
+              borderRadius: '8px',
+              border: '1px solid #333'
+            }}>
+              <p style={{ fontSize: '12px', color: '#666', margin: '0 0 8px 0' }}>
+                Test :
+              </p>
+              <p style={{ fontSize: '12px', color: '#999', margin: 0 }}>
+                admin@designal.com / admin123
               </p>
             </div>
-
-            <div className="pt-6 border-t border-gray-700">
-              <div className="text-center">
-                <p className="text-xs text-gray-500 mb-2">Compte de démonstration :</p>
-                <p className="text-xs text-gray-400">admin@designal.com / admin123</p>
-                <p className="text-xs text-gray-500 mt-2">Déjà connecté ? Vous serez redirigé automatiquement.</p>
-              </div>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+          </div>
+        </form>
+      </div>
     </div>
   )
 }
