@@ -193,10 +193,18 @@ export function Header() {
                 </a>
               ))}
               <div className="border-t border-gray-600 pt-4">
-                <Link href="/auth/login" className="text-base font-light tracking-wide text-white hover:text-gray-200 transition-colors py-2 block">
+                <Link 
+                  href="/auth/login" 
+                  className="text-base font-light tracking-wide text-white hover:text-gray-200 transition-colors py-2 block"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   Se connecter
                 </Link>
-                <Link href="/auth/register" className="py-2 block">
+                <Link 
+                  href="/auth/register" 
+                  className="py-2 block"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
                   <Button size="sm" className="bg-white text-[#022B31] hover:bg-gray-100 w-full">
                     Créer un compte
                   </Button>
