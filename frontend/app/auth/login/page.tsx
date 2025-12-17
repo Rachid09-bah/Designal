@@ -33,11 +33,16 @@ export default function LoginPage() {
       if (data?.success) {
         localStorage.setItem('token', data.token)
         localStorage.setItem('user', JSON.stringify(data.user))
-        if (data.user.role === 'admin') {
-          router.push('/admin/projects')
-        } else {
-          router.push('/')
-        }
+        
+        // Forcer le rechargement de la page pour mobile
+        // Attendre un peu puis rediriger
+        setTimeout(() => {
+          if (data.user.role === 'admin') {
+            window.location.href = '/admin/projects'
+          } else {
+            window.location.href = '/'
+          }
+        }, 500)
       } else {
         setError(data?.error || "Identifiants incorrects")
       }
