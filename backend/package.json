@@ -1,6 +1,6 @@
 {
   "name": "designal-backend",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Backend API pour DESIGNAL",
   "main": "server.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "dev-simple": "nodemon server-simple.js",
     "build": "echo 'No build step required'",
     "init-db": "node scripts/init-admin.js",
-    "create-admin": "node scripts/create-admin.js"
+    "create-admin": "node scripts/create-admin.js",
+    "fix-images": "node scripts/fix-image-urls.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
