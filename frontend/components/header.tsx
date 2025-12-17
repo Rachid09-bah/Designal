@@ -7,6 +7,92 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Menu, X } from "lucide-react"
 
+function MobileAuthButtons({ onClose }: { onClose: () => void }) {
+  const [isClient, setIsClient] = useState(false)
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    setIsClient(true)
+    const token = localStorage.getItem('token')
+    const userData = localStorage.getItem('user')
+    if (token && userData) {
+      setUser(JSON.parse(userData))
+    }
+  }, [])
+
+  const handleLogout = () => {
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
+    setUser(null)
+    onClose()
+    window.location.href = '/'
+  }
+
+  if (!isClient) {
+    return (
+      <>
+        <Link 
+          href="/auth/login" 
+          className="text-base font-light tracking-wide text-white hover:text-gray-200 transition-colors py-2 block"
+          onClick={onClose}
+        >
+          Se connecter
+        </Link>
+        <Link 
+          href="/auth/register" 
+          className="py-2 block"
+          onClick={onClose}
+        >
+          <Button size="sm" className="bg-white text-[#022B31] hover:bg-gray-100 w-full">
+            Créer un compte
+          </Button>
+        </Link>
+      </>
+    )
+  }
+
+  return user ? (
+    <div className="flex flex-col gap-3">
+      <div className="text-white text-base py-2">
+        Bonjour, {user.name}
+      </div>
+      {user.role === 'admin' && (
+        <Link href="/admin/projects" onClick={onClose}>
+          <Button size="sm" className="bg-white text-[#022B31] hover:bg-gray-100 w-full">
+            Administration
+          </Button>
+        </Link>
+      )}
+      <Button 
+        size="sm" 
+        onClick={handleLogout}
+        className="bg-red-600 text-white hover:bg-red-700 w-full"
+      >
+        Déconnexion
+      </Button>
+    </div>
+  ) : (
+    <>
+      <Link 
+        href="/auth/login" 
+        className="text-base font-light tracking-wide text-white hover:text-gray-200 transition-colors py-2 block"
+        onClick={onClose}
+      >
+        Se connecter
+      </Link>
+      <Link 
+        href="/auth/register" 
+        className="py-2 block"
+        onClick={onClose}
+      >
+        <Button size="sm" className="bg-white text-[#022B31] hover:bg-gray-100 w-full">
+          Créer un compte
+        </Button>
+      </Link>
+    </>
+  )
+}
+
 function AuthButtons({ isScrolled }: { isScrolled: boolean }) {
   const [isClient, setIsClient] = useState(false)
   const [user, setUser] = useState<any>(null)
@@ -193,22 +279,7 @@ export function Header() {
                 </a>
               ))}
               <div className="border-t border-gray-600 pt-4">
-                <Link 
-                  href="/auth/login" 
-                  className="text-base font-light tracking-wide text-white hover:text-gray-200 transition-colors py-2 block"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Se connecter
-                </Link>
-                <Link 
-                  href="/auth/register" 
-                  className="py-2 block"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  <Button size="sm" className="bg-white text-[#022B31] hover:bg-gray-100 w-full">
-                    Créer un compte
-                  </Button>
-                </Link>
+                <MobileAuthButtons onClose={() => setIsMobileMenuOpen(false)} />
               </div>
               <Button
                 size="sm"
