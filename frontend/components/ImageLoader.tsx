@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
-import { getImageUrl, isValidImageUrl } from '@/lib/imageUtils'
+import { forceHttpsUrl } from '@/lib/urlFixer'
 
 interface ImageLoaderProps {
   src: string
@@ -15,9 +15,9 @@ interface ImageLoaderProps {
 export function ImageLoader({ src, alt, width = 400, height = 300, className = "" }: ImageLoaderProps) {
   const [error, setError] = useState(false)
   
-  const imageUrl = getImageUrl(src)
+  const imageUrl = forceHttpsUrl(src)
 
-  if (error || !isValidImageUrl(src)) {
+  if (error || !imageUrl) {
     return (
       <div className={`bg-gray-800 flex items-center justify-center ${className}`} style={{ width, height }}>
         <span className="text-gray-400 text-sm">Image non disponible</span>

@@ -21,6 +21,37 @@ api.interceptors.request.use((config) => {
   return config
 })
 
+// Intercepteur pour corriger les URLs dans les réponses
+api.interceptors.response.use((response) => {
+  if (response.data) {
+    // Corriger récursivement toutes les URLs localhost
+    response.data = fixUrlsInObject(response.data)
+  }
+  return response
+})
+
+function fixUrlsInObject(obj: any): any {
+  if (!obj) return obj
+  
+  if (typeof obj === 'string' && obj.includes('localhost:5001')) {
+    return obj.replace('http://localhost:5001', 'https://designal-bah.onrender.com')
+  }
+  
+  if (Array.isArray(obj)) {
+    return obj.map(fixUrlsInObject)
+  }
+  
+  if (typeof obj === 'object') {
+    const fixed: any = {}
+    for (const [key, value] of Object.entries(obj)) {
+      fixed[key] = fixUrlsInObject(value)
+    }
+    return fixed
+  }
+  
+  return obj
+}
+
 // Services API
 export const contactAPI = {
   sendMessage: (data: { name: string; email: string; message: string }) =>
