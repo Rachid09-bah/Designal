@@ -54,6 +54,7 @@ app.use('/uploads', (req, res, next) => {
 // Routes API
 app.use('/api/auth', require('./routes/auth'))
 app.use('/api/projects', require('./routes/projects'))
+app.use('/api/field-projects', require('./routes/fieldProjects'))
 app.use('/api/upload', require('./routes/upload'))
 app.use('/api/contact', require('./routes/contact'))
 app.use('/api/admin', require('./routes/admin'))
