@@ -6,13 +6,18 @@
 export function getImageUrl(imagePath: string): string {
   if (!imagePath) return ''
   
-  // Si l'URL est déjà complète, la retourner telle quelle
-  if (imagePath.startsWith('http')) {
+  // Forcer le remplacement des URLs localhost
+  if (imagePath.includes('localhost:5001')) {
+    return imagePath.replace('http://localhost:5001', 'https://designal-bah.onrender.com')
+  }
+  
+  // Si l'URL est déjà complète et correcte, la retourner
+  if (imagePath.startsWith('https://designal-bah.onrender.com')) {
     return imagePath
   }
   
-  // Construire l'URL avec la base correcte selon l'environnement
-  const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'
+  // Construire l'URL avec la base de production
+  const baseUrl = 'https://designal-bah.onrender.com'
   
   // S'assurer que le chemin commence par /
   const cleanPath = imagePath.startsWith('/') ? imagePath : `/${imagePath}`

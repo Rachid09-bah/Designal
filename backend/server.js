@@ -13,17 +13,22 @@ const PORT = process.env.PORT || 5001
 // Trust proxy pour Render
 app.set('trust proxy', 1)
 
-// CORS optimisé pour production
+// CORS pour toutes les origines Vercel
 app.use(cors({
-  origin: [
-    'https://v0-designal-landing-page.vercel.app',
-    'https://designal.vercel.app',
-    'http://localhost:3000',
-    process.env.FRONTEND_URL
-  ].filter(Boolean),
+  origin: function (origin, callback) {
+    // Autoriser toutes les origines Vercel et localhost
+    if (!origin || 
+        origin.includes('vercel.app') || 
+        origin.includes('localhost') ||
+        origin === process.env.FRONTEND_URL) {
+      callback(null, true)
+    } else {
+      callback(null, true) // Permissif pour le moment
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
 }))
 
 // Body parsing
@@ -61,9 +66,52 @@ app.get('/api/health', (req, res) => {
     message: 'Backend DESIGNAL opérationnel',
     timestamp: new Date().toISOString(),
     uptime: Math.floor(process.uptime()),
-    version: '2.0.0',
+    version: '2.0.1',
     environment: process.env.NODE_ENV || 'development'
   })
+})
+
+// Route pour corriger les URLs d'images
+app.post('/api/fix-urls', async (req, res) => {
+  try {
+    const Project = require('./models/Project')
+    
+    const projects = await Project.find({
+      'images.url': { $regex: 'localhost' }
+    })
+
+    let fixed = 0
+    for (const project of projects) {
+      let updated = false
+      
+      project.images = project.images.map(image => {
+        if (image.url && image.url.includes('localhost:5001')) {
+          image.url = image.url.replace('http://localhost:5001', 'https://designal-bah.onrender.com')
+          updated = true
+          return image
+        }
+        return image
+      })
+
+      if (project.model3D && project.model3D.url && project.model3D.url.includes('localhost:5001')) {
+        project.model3D.url = project.model3D.url.replace('http://localhost:5001', 'https://designal-bah.onrender.com')
+        updated = true
+      }
+
+      if (updated) {
+        await project.save()
+        fixed++
+      }
+    }
+
+    res.json({ 
+      success: true, 
+      message: `${fixed} projets corrigés`,
+      total: projects.length 
+    })
+  } catch (error) {
+    res.status(500).json({ error: error.message })
+  }
 })
 
 // Root endpoint
