@@ -37,6 +37,16 @@ const projectSchema = new mongoose.Schema({
     alt: String,
     isPrimary: Boolean
   }],
+  model3D: {
+    url: String,
+    format: String, // glb, gltf, obj, etc.
+    size: Number
+  },
+  projectType: {
+    type: String,
+    enum: ['2D', '3D', 'mixed'],
+    default: '2D'
+  },
   createdBy: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

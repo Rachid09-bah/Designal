@@ -26,17 +26,18 @@ const storage = multer.diskStorage({
 const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
+    fileSize: 50 * 1024 * 1024 // 50MB pour les modèles 3D
   },
   fileFilter: (req, file, cb) => {
-    const allowedTypes = /jpeg|jpg|png|gif|webp/
+    const allowedTypes = /jpeg|jpg|png|gif|webp|glb|gltf|obj|fbx|dae|ply|stl/
     const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase())
-    const mimetype = allowedTypes.test(file.mimetype)
+    const imageTypes = /image\/(jpeg|jpg|png|gif|webp)/
+    const modelTypes = /model\/(gltf-binary|gltf\+json)|application\/(octet-stream)/
     
-    if (mimetype && extname) {
+    if (imageTypes.test(file.mimetype) || modelTypes.test(file.mimetype) || extname) {
       return cb(null, true)
     } else {
-      cb(new Error('Seules les images sont autorisées'))
+      cb(new Error('Seules les images et modèles 3D sont autorisés'))
     }
   }
 })

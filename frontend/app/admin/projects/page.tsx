@@ -28,7 +28,9 @@ function AdminProjectsContent() {
     status: 'draft',
     featured: false,
     client: '',
-    images: [{ url: '', alt: '', isPrimary: true }]
+    projectType: '2D',
+    images: [{ url: '', alt: '', isPrimary: true }],
+    model3D: { url: '', format: '', size: 0 }
   })
   const [isUploading, setIsUploading] = useState(false)
   const [editingProject, setEditingProject] = useState<any>(null)
@@ -87,8 +89,9 @@ function AdminProjectsContent() {
       setEditingProject(null)
       setFormData({
         title: '', description: '', category: '', subcategory: '', style: '',
-        status: 'draft', featured: false, client: '',
-        images: [{ url: '', alt: '', isPrimary: true }]
+        status: 'draft', featured: false, client: '', projectType: '2D',
+        images: [{ url: '', alt: '', isPrimary: true }],
+        model3D: { url: '', format: '', size: 0 }
       })
       fetchProjects()
     } catch (error: any) {
@@ -154,6 +157,31 @@ function AdminProjectsContent() {
     } catch (error: any) {
       console.error('Erreur upload:', error)
       const msg = error?.response?.data?.error || 'Erreur lors de l\'upload'
+      setErrorMsg(msg)
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  const handle3DUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setIsUploading(true)
+    try {
+      const { data } = await uploadAPI.single(file)
+      const format = file.name.split('.').pop()?.toLowerCase() || ''
+      setFormData({
+        ...formData,
+        model3D: {
+          url: data.imageUrl,
+          format: format,
+          size: file.size
+        }
+      })
+    } catch (error: any) {
+      console.error('Erreur upload 3D:', error)
+      const msg = error?.response?.data?.error || 'Erreur lors de l\'upload du modèle 3D'
       setErrorMsg(msg)
     } finally {
       setIsUploading(false)
@@ -264,6 +292,19 @@ function AdminProjectsContent() {
                 </div>
 
                 <div>
+                  <label className="block text-sm font-medium text-white mb-2">Type de projet</label>
+                  <select
+                    value={formData.projectType}
+                    onChange={(e) => setFormData({ ...formData, projectType: e.target.value })}
+                    className="w-full p-4 border border-gray-700 rounded-xl bg-gray-800 text-white focus:border-white focus:outline-none transition-colors font-medium mb-4"
+                  >
+                    <option value="2D">Projet 2D (Images)</option>
+                    <option value="3D">Projet 3D (Modèle 3D)</option>
+                    <option value="mixed">Mixte (Images + 3D)</option>
+                  </select>
+                </div>
+
+                <div>
                   <label className="block text-sm font-medium text-white mb-2">Image principale *</label>
                   <input
                     type="file"
@@ -285,6 +326,25 @@ function AdminProjectsContent() {
                     </div>
                   )}
                 </div>
+
+                {(formData.projectType === '3D' || formData.projectType === 'mixed') && (
+                  <div>
+                    <label className="block text-sm font-medium text-white mb-2">Modèle 3D (.glb, .gltf)</label>
+                    <input
+                      type="file"
+                      accept=".glb,.gltf,.obj,.fbx"
+                      onChange={handle3DUpload}
+                      className="w-full p-4 border border-gray-700 rounded-xl bg-gray-800 text-white focus:border-white focus:outline-none transition-colors font-medium file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-white file:text-black hover:file:bg-gray-200"
+                    />
+                    {formData.model3D.url && (
+                      <div className="mt-2 p-3 bg-gray-800 rounded-lg">
+                        <p className="text-sm text-green-400">✅ Modèle 3D uploadé</p>
+                        <p className="text-xs text-gray-400">Format: {formData.model3D.format}</p>
+                        <p className="text-xs text-gray-400">URL: {formData.model3D.url}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex items-center gap-6">
                   <select
