@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useState } from 'react'
+import { getImageUrl, isValidImageUrl } from '@/lib/imageUtils'
 
 interface ImageLoaderProps {
   src: string
@@ -14,17 +15,9 @@ interface ImageLoaderProps {
 export function ImageLoader({ src, alt, width = 400, height = 300, className = "" }: ImageLoaderProps) {
   const [error, setError] = useState(false)
   
-  // Construire l'URL complète
-  const getImageUrl = (imagePath: string) => {
-    if (!imagePath) return ''
-    if (imagePath.startsWith('http')) return imagePath
-    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:5001'
-    return `${baseUrl}${imagePath}`
-  }
-
   const imageUrl = getImageUrl(src)
 
-  if (error || !imageUrl) {
+  if (error || !isValidImageUrl(src)) {
     return (
       <div className={`bg-gray-800 flex items-center justify-center ${className}`} style={{ width, height }}>
         <span className="text-gray-400 text-sm">Image non disponible</span>
