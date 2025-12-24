@@ -1,0 +1,4 @@
+CLOUDINARY CREDENTIALS HARDCODED v1.4.2
+- Fixed 500 error on upload
+- Hardcoded credentials for immediate deployment
+- Ready for production use
