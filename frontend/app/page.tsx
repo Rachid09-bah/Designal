@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Contact } from "@/components/contact"
 import { PageTransition } from "@/components/PageTransition"
 import { ImageLoader } from "@/components/ImageLoader"
+import { ImageGalleryModal } from "@/components/ImageGalleryModal"
 
 const servicesData = [
   { title: "Appartement / Maison", desc: "Chambre, salon, cuisine", subs: [
@@ -38,6 +39,11 @@ const servicesData = [
 export default function Home() {
   const [projects, setProjects] = React.useState<any[]>([])
   const [loading, setLoading] = React.useState(true)
+  const [galleryModal, setGalleryModal] = React.useState({
+    isOpen: false,
+    currentImage: { url: '', alt: '', title: '', category: '' },
+    allImages: [] as Array<{ url: string, alt: string, title: string, category: string }>
+  })
 
   // Charger les projets depuis l'API
   React.useEffect(() => {
@@ -46,7 +52,18 @@ export default function Home() {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/projects`)
         if (response.ok) {
           const data = await response.json()
-          setProjects(data.projects || [])
+          const projectsData = data.projects || []
+          setProjects(projectsData)
+          
+          // Préparer les images pour la galerie
+          const allImages = projectsData.map((project: any) => ({
+            url: project.images?.[0]?.url || '',
+            alt: project.images?.[0]?.alt || project.title,
+            title: project.title,
+            category: project.category
+          })).filter((img: any) => img.url)
+          
+          setGalleryModal(prev => ({ ...prev, allImages }))
         }
       } catch (error) {
         console.error('Erreur lors du chargement des projets:', error)
@@ -421,7 +438,21 @@ export default function Home() {
               ))
             ) : projects.length > 0 ? (
               projects.map((project, index) => (
-                <div key={project._id} className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2">
+                <div key={project._id} className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-gray-700/50 bg-gradient-to-br from-gray-800/50 to-gray-900/50 backdrop-blur-sm shadow-xl hover:shadow-2xl hover:shadow-[#022B31]/20 transition-all duration-700 hover:-translate-y-2 cursor-pointer"
+                  onClick={() => {
+                    const currentImage = {
+                      url: project.images?.[0]?.url || '',
+                      alt: project.images?.[0]?.alt || project.title,
+                      title: project.title,
+                      category: project.category
+                    }
+                    setGalleryModal({
+                      isOpen: true,
+                      currentImage,
+                      allImages: galleryModal.allImages
+                    })
+                  }}
+                >
                   <ImageLoader 
                     src={project.images?.[0]?.url || ''} 
                     alt={project.images?.[0]?.alt || project.title} 
@@ -503,6 +534,14 @@ export default function Home() {
       <Contact />
 
         <Footer />
+        
+        {/* Gallery Modal */}
+        <ImageGalleryModal
+          isOpen={galleryModal.isOpen}
+          onClose={() => setGalleryModal(prev => ({ ...prev, isOpen: false }))}
+          currentImage={galleryModal.currentImage}
+          allImages={galleryModal.allImages}
+        />
       </main>
     </PageTransition>
   )
