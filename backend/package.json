@@ -1,6 +1,6 @@
 {
   "name": "designal-backend",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Backend API pour DESIGNAL",
   "main": "server.js",
   "scripts": {
